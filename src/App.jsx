@@ -1,10 +1,33 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TodoList from './components/TodoList';
 
 const App = () => {
-  const [todos, setTodos] = useState([]);
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
+  const [todos, setTodos] = useState(() => {
+    try {
+      const stored = localStorage.getItem('todos');
+      return stored ? JSON.parse(stored) : [];
+    } catch (err) {
+      console.error('Failed to parse todos from localStorage:', err);
+      return [];
+    }
+  });
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
+  //load data from local storage
+  // useEffect(() => {
+  //   const storedTodos = localStorage.getItem('todos');
+  //   if (storedTodos) {
+  //     setTodos(JSON.parse(storedTodos));
+  //   }
+  // }, []);
+
+  //updated date set to local Storage
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
+
   
     const handleAdd = () => {
       if (title.trim() && description.trim()) {
@@ -76,7 +99,7 @@ const styles = {
     border: '1px solid #555',
     backgroundColor: '#2c2c2c',
     color: '#fff',
-    boxSizing: 'border-Box'
+    boxSizing: 'border-box'
   },
   textarea: {
     width: '100%',
@@ -86,8 +109,9 @@ const styles = {
     border: '1px solid #555',
     backgroundColor: '#2c2c2c',
     color: '#fff',
-    boxSizing: 'border-Box',
-    fontFamily: 'sans-serif'
+    boxSizing: 'border-box',
+    fontFamily: 'sans-serif',
+    // boxShadow: '0 2px 2px #333'
   },
   button: {
     width: '100%',
